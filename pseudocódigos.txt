@@ -1,0 +1,1042 @@
+PSEUDOCÓDIGOS
+
+
+ORDENACIÓN POR INSERCIÓN:
+procedimiento Ordenación por Inserción (var T[1..n])
+	para i := 2 hasta n hacer
+		x := T[i];
+		j := i-1;
+		mientras j > 0 y T[j] > x hacer
+			T[j+1] := T[j];
+			j := j-1
+		fin mientras;
+		T[j+1] := x
+	fin para
+fin procedimiento
+
+
+
+ORDENACIÓN POR SELECCIÓN:
+procedimiento Ordenación por Selección (var T[1..n])
+	para i := 1 hasta n-1 hacer
+		minj := i;
+		minx := T[i];
+		para j := i+1 hasta n hacer
+			si T[j] < minx entonces
+				minj := j;
+				minx := T[j]
+			fin si
+		fin para;
+		T[minj] := T[i];
+		T[i] := minx
+	fin para
+fin procedimiento
+
+
+
+PILAS
+tipo Pila = registro
+	Cima_de_pila : 0..Tamaño_máximo_de_pila
+	Vector_de_pila : vector[1..Tamaño_máximo_de_pila] de Tipo_de_elemento
+fin registro
+
+procedimiento Crear Pila (P)
+	P.Cima_de_pila := 0
+fin procedimiento
+
+función Pila Vacía (P) :test
+	devolver P.Cima_de_pila = 0
+fin función
+
+procedimiento Apilar (x, P)
+	si P.Cima_de_pila = Tamaño_máximo_de_pila entonces
+		error Pila llena
+	sino
+		P.Cima_de_pila := P.Cima_de_pila + 1;
+		P.Vector_de_pila[P.Cima_de_pila] := x
+fin procedimiento
+
+función Cima (P) : Tipo_de_elemento
+	si Pila Vacía (P) entonces error Pila Vacía 
+	sino devolver P.Vector_de_pila[P.Cima_de_Pila]
+fin función
+
+procedimiento Desapilar (P)
+	si Pila Vacía (P) entonces error Pila vacía
+	sino P.Cima_de_pila := P.Cima_de_pila - 1
+fin procedimiento
+
+
+
+COLAS
+tipo Cola = registro
+	Cabeza_de_cola, Final_de_cola: 1..Tamaño_máximo_de_cola
+	Tamaño_de_cola: 0..Tamaño_máximo_de_cola
+	Vector_de_cola: vector [1..Tamaño_máximo_de_cola] de Tipo_de_elemento
+fin registro
+
+procedimiento Crear_Cola (C)
+	C.Tamaño_de_cola := 0;
+	C.Cabeza_de_cola := 1;
+	C.Final_de_cola := Tamaño_máximo_de_cola
+fin procedimiento
+
+función Cola_Vacía (C) : test
+	devolver C.Tamaño_de_cola = 0
+fin función
+
+procedimiento incrementar (x)
+	si x = Tamaño_máximo_de_cola entonces x := 1
+	sino x := x + 1
+fin procedimiento
+
+procedimiento Insertar_en_Cola (x, C)
+	si C.Tamaño_de_cola = Tamaño_máximo_de_cola entonces 
+		error Cola llena
+	sino 
+		C.Tamaño_de_cola := C.Tamaño_de_cola + 1;
+		incrementar(C.Final_de_cola);
+		C.Vector_de_cola[C.Final_de_Cola] := x;
+fin procedimiento
+
+función Quitar_Primero (C) : Tipo_de_elemento
+	si Cola_Vacía (C) entonces
+		error Cola vacía
+	sino
+		C.Tamaño_de_cola := C.Tamaño_de_cola - 1;
+		x := C.Vector_de_cola[C.Cabeza_de_cola];
+		incrementar(C.Cabeza_de_cola);
+		devolver x
+fin función
+
+función Primero (C) : Tipo_de_elemento
+	si Cola_Vacía (C) entonces
+		error Cola vacía
+	sino
+		devolver C.Vector_de_cola[C.Cabeza_de_cola]
+fin función
+
+
+
+LISTAS
+tipo PNodo = puntero a Nodo
+	Lista = PNodo
+	Posición = PNodo
+	Nodo = registro 
+		Elemento : Tipo_de_elemento
+		Siguiente : PNodo
+fin registro
+
+procedimiento Crear Lista (L)
+	nuevo (tmp);
+	si tmp = nil entonces error Memoria agotada
+	sino 
+		tmp^.Elemento := {nodo cabecera};
+		tmp^.Siguiente := nil;
+		L := tmp
+fin procedimiento
+
+función Lista Vacía (L): test
+	devolver L^.siguiente = nil
+fin función
+
+función Buscar (x, L): Posición de la 1ª ocurrencia o nil
+	p := L^.Siguiente;
+	mientras p <> nil y p^.Elemento <> x hacer
+		p := p^.Siguiente;
+	devolver p
+fin función
+
+función Último Elemento (p): test
+	devolver p^.Siguiente = nil
+fin funcion
+
+función Buscar Anterior (x, L): posicion anterior a x o a nil
+	p := L;
+	mientras p^.Siguiente <> nil y p^.Siguiente^.Elemento <> x hacer 
+		p := p^.Siguiente;
+	devolver p
+fin función 
+
+procedimiento Eliminar (x, L)
+	p := Buscar Anterior (x, L);
+	si Último Elemento (p) entonces error No encontrado
+	sino tmp := p^.Siguiente;
+		p^.Siguiente := tmp^.Siguiente;
+		liberar(tmp)
+fin procedimiento
+
+procedimiento Insertar (x, L, p)
+	nuevo (tmp); {Inserta despues de la posicion p}
+	si tmp = nil entonces
+		error Memoria agotada
+	sino
+		tmp^.Elemento := x;
+		tmp^.Siguiente := p^.Siguiente;
+		p^.Siguiente := tmp
+fin procedimiento
+
+
+
+ÁRBOLES BINARIOS DE BÚSQUEDA
+tipo
+	PNodo = ^Nodo
+	Nodo = registro
+		Elemento: TipoElemento
+		Izquierdo, Derecho: PNodo
+	fin registro
+	ABB = PNodo
+
+procedimiento CrearABB (var A)
+	A := nil
+fin procedimiento
+
+función Buscar (x, A) : PNodo
+	si A = nil entonces devolver nil
+	sino si x = A^.Elemento entonces devolver A
+	sino si x < A^.Elemento entonces
+		devolver Buscar (x, A^.Izquierdo)
+	sino devolver Buscar (x, A^.Derecho)
+fin función
+
+función BuscarMin (A) :PNodo
+	si A = nil entonces devolver nil
+	sino si A^.Izquierdo = nil entonces devolver A
+	sino devolver BuscarMin (A^.Izquierdo)
+fin función
+
+procedimiento Insertar (x, var A)
+	si A = nil entonces
+		nuevo (A);
+		si A = nil entonces error "sin memoria"
+		sino
+			A^.Elemento := x;
+			A^.Izquierdo := nil;
+			A^.Derecho := nil
+	sino si x  < A^.Elemento entonces 
+		Insertar (x, A^.Izquierdo)
+	sino si x > A^.Elemento entonces
+		Insertar (x, A^.Derecho)
+	{si x = A^.Elemento : nada}
+fin procedimiento
+
+procedimiento Eliminar (x, var A)
+	si A = nil entonces error "no encontrado"
+	sino si x < A^.Elemento entonces 
+		Eliminar (x, A^.Izquierdo)
+	sino si x > A^.Elemento entonces
+		Eliminar (x, A^.Derecho)
+	sino {x = A^.Elemento}
+		si A^.Izquierdo = nil entonces 
+			tmp := A; A:= A^.Derecho; liberar(tmp)
+		sino si A^.Derecho = nil entonces
+			tmp := A; A:=A^.Izquierdo; liberar (tmp)
+		sino tmp := BuscarMin (A^.Derecho);
+			A^.Elemento := tmp^.Elemento;
+			Eliminar (A^.Elemento, A^.Derecho)
+fin procedimiento
+
+
+
+MONTÍCULOS
+tipo Montículo = registro
+	Tamaño_monticulo : 0..Tamaño_máximo
+	Vector_montículo : vector[1..Tamaño_máximo] de Tipo_elemento
+fin registro
+
+procedimiento Inicializar_Montículo (M)
+	M.Tamaño_monticulo := 0
+fin procedimiento
+
+función Montículo_Vacío (M) : test
+	return M.Tamaño_monticulo = 0
+fin función
+
+procedimiento Flotar (M, i) 
+	mientras i > 1 y M.Vector_montículo[i div 2] < M.Vector_montículo[i] hacer
+		intercambiar M.Vector_montículo[i div 2] y M.Vector_montículo[i];
+		i := i div 2
+	fin mientras
+fin procedimiento
+
+procedimiento Insertar (x, M)
+	si M.Tamaño_monticulo = Tamaño_máximo entonces 
+		error Monticulo lleno
+	sino M.Tamaño_monticulo := M.Tamaño_monticulo + 1;
+		 M.Vector_montículo[M.Tamaño_monticulo] := x;
+		 Flotar(M, M.Tamaño_monticulo)
+fin procedimiento
+
+procedimiento Hundir (M, i)
+	repetir
+		HijoIzq := 2*1;
+		HijoDer := 2*i+1;
+		j := i;
+		si HijoDer <= M.Tamaño_monticulo y 
+			M.Vector_montículo[HijoDer] > M.Vector_montículo[i]
+		entonces i := HijoDer;
+		si HijoIzq <= M.Tamaño_monticulo y
+			M.Vector_montículo[HijoIzq] > M.Vector_montículo[i]
+		entonces i := HijoIzq;
+		intercambiar M.Vector_montículo[j] y M.Vector_montículo[i];
+	hasta j = i {si j = i el nodo alcanzó su posición final}
+fin procedimiento
+
+función EliminarMax (M) : Tipo_elemento
+	si Montículo_Vacío (M) entonces
+		error Monticulo vacio
+	sino 
+		x := M.Vector_montículo[1];
+		M.Vector_montículo[1] := M.Vector_montículo[M.Tamaño_monticulo];
+		M.Tamaño_monticulo := M.Tamaño_monticulo - 1;
+		si M.Tamaño_monticulo > 0 entonces 
+			Hundir (M, 1);
+		devolver x
+fin función
+
+procedimiento Crear_Montículo (V[1..n], M)
+	Copiar V en M.Vector_montículo;
+	M.Tamaño_monticulo := n;
+	para i := M.Tamaño_monticulo div 2 hasta 1 paso -1
+		Hundir (M, i);
+	fin para
+fin procedimiento
+
+K-ÉSIMO MAYOR DE N NUMEROS
+función KésimoMayor(V[1..n], k) : número {1 <= k <= n}	//O(n^2)
+	Ordenar_por_inserción (V[1..n]); {decrecientemente}	//O(n^2)
+	devolver V[k]										//O(1)
+fin función
+
+función KésimoMayor (V[1..n], k) : número 	//O(n^2)
+	Ordenar_por_inserción (V[1..k]);		//O(k^2)
+	para i := k+1 hasta n hacer				//O((n-k)k)
+		j := k;
+		si V[j] < V[i] entonces
+			minetras j > 1 y V[j-1] < V[i] hacer
+				V[j] := V[j-1]; j := j-1;
+			fin mientras
+			v[j] := V[i]
+	fin para
+	devolver V[k]
+fin función
+
+función KésimoMayor (V[1..n], k) : número 	//O(nlogn)
+	Crear_Montículo_Máximos (V[1..n], M);	//O(n)
+	para i := 1 hasta k-1 hacer				//O(k(logn))
+		EliminarMax(M);
+	fin para
+	devolver ObternerMayor(M);				//O(1)
+fin función
+
+función KésimoMayor (V[1..n], k) : número 	//O(nlogn)
+	Crear_Montículo_Mínimos (V[1..k], M);	//O(k)
+	para i := k+1 hasta n hacer				//O((n-k)logk)
+		si ObtenerMenor(M) < V[i] entonces 	//O(1)
+			EliminarMin(M);					//O(logk)
+			insertar (V[i], M)				//O(logk)
+	fin para
+	devolver ObternerMenor(M);
+fin función
+
+
+
+FUNCIONES DE DISPERSIÓN 
+//Sumar los valores ASCII de los caracteres 
+función Dispersión1 (Clave, TamañoClave) : Índice
+	valor := ascii(Clave[1]);
+	para i := 2 hasta TamañoClave hacer 
+		valor := valor + ascii(Clave[i])
+	fin para 
+	devolver valor mod N
+fin función
+
+//En esta se supone que la clave tiene al menos 3 caracteres
+función Dispersión2 (Clave, TamañoClave) : Índice
+	devolver (ascii(Clave[1]) + 27*ascii(Clave[2]) + 729*ascii(Clave3)) mod N
+fin función	
+
+//En la función de dispersión que sigue intervienen todos los caracteres en la clave y se puede esperar una buena distribución.
+función Dispersión3 (Clave, TamañoClave) : Índice
+	valor := ascii(Clave[1]);
+	para i := 2 hasta TamañoClave hacer
+		valor :) (32*valor + ascii(Clave[i])) mod N
+	fin para
+	devolver valor
+fin función
+
+TABLAS DE DISPERSIÓN ABIERTAS
+tipo
+	Índice = 0..N-1
+	Posición = ^Nodo
+	Lista = Posición
+	Nodo = registro
+		Elemento : TipoElemento
+		Siguiente : Posición
+	fin registro
+	TablaDispersión = vector[Índice] de Lista
+
+procedimiento InicializarTabla (T)
+	para i := 0 hasta N-1 hacer
+		CrearLista(T[i])
+	fin para
+fin procedimiento
+
+función Buscar (Elem, Tabla): Posición 
+	i := Dispersión(Elem);
+	devolver BuscarLista(Elem, Tabla[i])
+fin función
+
+procedimiento Insertar (Elem, Tabla)
+	pos := Buscar(Elem, Tabla); {No inserta repetidos}
+	si pos = nil entonces
+		i := Dispersión(Elem);
+		InsertarLista(Elem, Tabla[i])
+fin procedimiento
+
+TABLAS DE DISPERSIÓN CERRADAS
+tipo 
+	ClaseDeEntrada = (legítima, vacía, eliminada)
+	Índice = 0..N-1
+	Posición = Índice
+	Entrada = registro
+		Elemento : TipoElemento
+		Información : ClaseDeEntrada
+	fin registro
+	TablaDispersión = vector[Índice] de Entrada
+
+procedimiento InicializarTabla (D)
+	para i := 0 hasta N-1 hacer
+		D[i].Información := vacía
+	fin para
+fin procedimiento
+
+función Buscar (Elem, D) : Posición
+	i := 0;
+	x = Dispersión(Elem);
+	PosActual = x;
+	mientras D[PosActual].Información <> vacía y 
+				D[PosActual].Elemento <> Elem hacer
+			i := i+1;
+			PosActual := (x + FunResoluciónColisión(x,i)) mod N
+	fin mientras;
+	devolver PosActual
+fin función 
+//La busqueda acaba al caer en una celda vacía o al encontrar el elemento borrado
+
+procedimiento Insertar (Elem, D)
+	pos = Buscar(Elem, D);
+	si D[pos].Información <> legítima
+	entonces {Bueno para insertar}
+		D[pos].Elemento := Elem;
+		D[pos].Información := legítima	
+fin procedimiento
+
+procedimiento Eliminar (Elem, D)
+	pos = Buscar(Elem, D);
+	si D[pos].Información = legítima
+	entonces
+		D[pos].Información := eliminada
+fin procedimiento
+
+
+
+CONJUNTOS DISJUNTOS 
+//Primer enfoque
+tipo 
+	Elemento = entero;
+	Conj = entero;
+	ConjDisj = vector [1..N] de entero
+
+función Buscar1 (C, x) : Conj 	//O(1)
+	devolver C[x]
+fin función
+
+procedimiento Unir1(C, a, b)	//O(n)
+	i := min (C[a], C[b]);
+	j := max (C[a], C[b]);
+	para k := 1 hasta N hacer
+		si C[k] = j entonces C[k] := i
+	fin para
+fin procedimiento
+//La combinacion de m busquedas y n-1 uniones toma O(m + n^2)
+
+//Segundo enfoque
+función Buscar2 (C, x) : Conj
+	r := x;
+	mientras C[r] <> r hacer
+		r := C[r]
+	fin mientras;
+	devolver r
+fin función 	//En el peor caso es O(n)
+
+procedimiento Unir2 (C, raiz1, raiz2)
+	si raiz1 < raiz2 entonces C[raiz2] := raiz1
+	sino C[raiz] := raiz2
+fin procedimiento 	//O(1)
+//La combinacion de m busquedas y n-1 uniones toma O(m*n)
+
+//Unión por alturas
+procedimiento Unir3 (C, A, raiz1, raiz2)
+	si A[raiz1] = A[raiz2] entonces
+		A[raiz1] := A[raiz1] + 1;
+		C[raiz2] := raiz1
+	sino si A[raiz1] > A[raiz2] entonces C[raiz2] := raiz1
+	sino C[raiz1] := raiz2
+fin procedimiento
+//El tiempo de ejecución de una búsqueda es O(logn)
+//Combinando m busquedas y n-1 uniones O(m*logn + n)
+
+//Compresión de caminos
+función Buscar3 (C, x) : Conj
+	r := x;
+	mientras C[r] <> r hacer 
+		r := C[r]
+	fin mientras;
+	i := x;
+	mientras i <> r hacer
+		j := C[i]; C[i] := r; i := j
+	fin mientras
+	devolver r
+fin función
+
+
+
+ALGORITMOS SOBRE SECUENCIAS Y CONJUNTOS DE DATOS
+
+ORDENACIÓN DE SHELL 
+procedimiento Ordenación de Shell (var T[1..n])
+	incremento := n;
+	reptir
+		incremento := incremento div 2;
+		para i := incremento + 1 hasta n hacer
+			tmp := T[i];
+			j := i;
+			seguir := cierto;
+			mientras j - incremento > 0 y seguir hacer 
+				si tmp < T[j-incremento] entonces
+					T[j] := T[j-incremento];
+					j := j-incremento
+				sino seguir := falso;
+			T[j] := tmp
+	hasta incremento = 1
+fin procedimiento
+
+ORDENACIÓN POR MONTÍCULOS(heapsort)
+procedimiento Ordenación por Monticulos (var T[1..n])
+	Crear montículo (T, M);
+	para i := 1 hasta n hacer 
+		T[n-i+1] := Obtener mayor valor (M);
+		Eliminar mayor valor(M)
+	fin para
+fin procedimiento
+
+procedimiento Crear Montículo (V[1..n], var M)	//O(nlogn)
+	Copiar V[1..n] en M[1..n];
+	para i := n div 2 hasta 1 paso -1 hacer
+		hundir(M, i)
+	fin para
+fin procedimiento	
+//O(n) es Crear Monticulo, y n Eliminar es O(nlogn) 
+//Observación incluso en el peor caso es O(nlogn), pero en la práctica es más lento que Shell con incrementos de Sedgewick
+
+ORDENACIÓN POR FUSIÓN
+procedimiento Fusión (var T[Izda..Dcha], Centro:Izda..Dcha)
+	i := Izda; j := Centro+1; k := Izda;
+	mientras i <= Centro y j <= Dcha hacer
+		si T[i] <= T[j] entonces Aux[k] := T[i]; i := i+1
+		sino Aux[k] := T[j]; j := j+1;
+		k := k+1;
+	mientras i <= Centro hacer
+		Aux[k] := T[i]; i := i+1; k := k+1;
+	mientras j <= Dcha hacer 
+		Aux[k] := T[j]; j := j+1; k := k+1;
+	para k := Izda hasta Dcha hacer
+		T[k] := Aux[k]
+fin procedimiento
+
+procedimiento Ordenación por Fusión Recursivo (var T[Izda..Dcha])
+	si Izda+UMBRAL < Dcha entonces
+		Centro := (Izda+Dcha) div 2;
+		Ordenación por Fusión Recursivo (T[Izda..Cento]);
+		Ordenación por Fusión Recursivo (T[Centro+1..Dcha]);
+		Fusión (T[Izda..Dcha], Centro)
+	sino Ordenación por Inserción (T[Izda..Dcha])
+fin procedimiento
+
+procedimiento Ordenación por Fusión (var T[1..n])
+	Ordenación por Fusión Recursivo (T[1..n]);
+fin procedimiento
+
+ORDENACIÓN RÁPIDA(QUICKSORT)
+procedimiento Mediana 3 (var T[i..j])
+	centro := (i+j) div 2;
+	si T[i] > T[centro] entonces intercambiar (T[i], T[centro]);
+	si T[i] > T[j] entonces intercambiar (T[i], T[j]);
+	si T[centro] > T[j] entonces intercambiar (T[centro], T[j]);
+	intercambiar (T[centro], T[j-1])
+fin procedimiento
+
+procedimiento Qsort (var T[i..j])
+	si i+UMBRAL <= j entonces
+		Mediana 3 (T[i..j]);
+		pivote := T[j-1]; k := i; m := j-1; {solo con mediana de 3}
+		repetir
+			repetir k := k+1 hasta T[k] >= pivote;
+			repetir m := m-1 hasta T[m] <= pivote;
+		hasta m <= k;
+		intercambiar (T[k], T[m]);	{deshace el ultimo intercambio}
+		intercambiar (T[k], T[j-1]); 	{pivote en posicion k}
+		Qsort (T[i..k-1]);
+		Qsort (T[k+1..j])
+fin procedimiento
+
+procedimiento Quicksort (var T[1..n])
+	Qsort (T[1..n]);
+	Ordenación por Inserción (T[1..n])
+fin procedimiento
+//Peor caso T(n) = O(n^2)
+//Mejor caso T(n) = O(nlogn)
+//Caso medio T(n) = O(nlogn)
+
+SUMA DE LA SUBSECUENCIA MÁXIMA
+función SSM (a[1..n]) : valor
+	devolver SSM recursiva (a, 1, n)
+fin función
+
+función SSM recursiva (var a[1..n], izq, der) : valor
+	si izq = der entonces
+		si a[izq] > 0 entonces 
+			devolver a[izq]
+		sino
+			devolver 0
+		fin si
+	sino
+		Centro := (izq + der) div 2;
+		Primera solución := SSM recursiva (a, izq, Centro);
+		Segunda solución := SSM recursiva (a, Centro + 1, der);
+		Suma máxima izquierda := 0; Suma izquierda := 0;
+		para i := Centro hasta izq paso -1 hacer 
+			Suma izquierda := Suma izquierda + a[i];
+			si Suma izquierda > suma máxima izquierda entonces
+				Suma máxima izquierda := Suma izquierda
+		fin para;
+		Suma máxima Derecho := 0; Suma derecha := 0;
+		para i := Centro + 1 hasta der hacer
+			Suma derecha := Suma derecha + a[i];
+			si Suma derecha > Suma máxima derecha entonces
+				Suma máxima derecha := Suma derecha
+		fin para;
+		devolver max (Primer solución, Segunda solución, Suma máxima izquierda + Suma máxima derecha)
+	fin si
+fin función
+
+SUMA DE LA SUBSECUENCIA MÁXIMA EN LÍNEA	 
+función SSM en línea (a[1..n]) : <i, j, valor>
+	i := 1; EstaSuma := 0; SumaMax := 0; MejorI := 0; MejorJ := 0;
+	para j := 1 hasta n hacer 	
+		EstaSuma := EstaSuma + a[j];
+		si EstaSuma > SumaMax entonces
+			SumaMax := EstaSuma;
+			MejorI := i;
+			MejorJ := j
+		sino si EstaSuma < 0 entonces 
+			i := j+1;
+			EstaSuma := 0
+		fin si
+	fin para
+	devolver <MejorI, MejorJ, SumaMax>
+fin función
+
+BÚSQUEDA BINARIA
+función Búsqueda Binaria (x, a[1..n]) : posición
+	i := 1; j := n;								{espacio de búsqueda : i..j}
+	mientras i <= j hacer
+		medio := (i+j) div 2;
+		si a[medio] < x entonces
+			i := medio + 1
+		sino si a[medio] > x entonces 
+			j := medio - 1
+		sino devolver medio						{se interrumpe el bucle}
+	fin mientras;
+	devolver "elemento no encontrado"			{fin normal del bucle}
+fin función
+
+función Búsqueda Binaria (x, a[1..n]): posición {función interfaz}
+{a: vector ordenado de modo no decreciente}
+	devolver Búsqueda Binaria Recursiva (x, a, 1, n)
+fin función
+
+BÚSQUEDA BINARIA RECURSIVA
+función Búsqueda Binaria Recursiva (x, var a[1..n], i, j): posición
+{espacio de búsqueda: i..j}
+	si i > j entonces devolver 0 {"elemento no encontrado"}
+	sino si i = j entonces
+		si a[i] = x entonces devolver i
+		sino devolver 0 {"elemento no encontrado"}
+	sino {i < j}
+		medio := (i + j) div 2 ;
+		si a[medio] < x entonces
+			devolver Búsqueda Binaria Recursiva (x, a, medio+1, j)
+		sino si a[medio] > x entonces
+			devolver Búsqueda Binaria Recursiva (x, a, i, medio-1)
+		sino devolver medio {a[medio] = x}
+fin función
+
+
+ALGORITMOS VORAZES
+
+PAGAR EXACTAMENTE n UNIDADES DE VALOR CON UN MÍNIMO DE MONEDAS
+const M = [1,2,5,10,50,100,200]
+función Devolver cambio (n) : conjunto de monedas
+	S := conjunto vacío;
+	ss := 	{suma de las monedas de S}
+	mientras ss <> n hacer
+		x := mayor elemento de M : ss + x <= n;
+		si no existe tal elemento entonces devolver "no hay soluciones";
+		S := S U {una moneda e valor x};
+		ss := ss + x;
+	fin mientras;
+	devolver S
+fin función
+
+ESQUEMA DE LOS ALGORITMOS VORACES 
+función Voraz (C:conjunto) : conjunto
+	S := conjunto vacío;
+	mientras C <> conjunto vacío y no solución(S) hacer {bucle voraz}
+		x := seleccionar(C);
+		C := C-{x}
+		si factible (SU{x}) entonces S := SU{x}
+	fin mientras;
+	si solución (S) entonces devolver S
+	sino devolver "no hay soluciones"
+fin función
+
+EL PROBLEMA DE LA MOCHILA
+función Mochila 1 ( w[1..n], v[1..n], W): objetos[1..n]
+	para i := 1 hasta n hacer
+		x[i] := 0;	{la solución se construye en x}
+	peso := 0;
+	{bucle voraz:}
+	mientras peso < W hacer
+		i := el mejor objeto restante; {1}
+		si peso+w[i] <= W entonces
+			x[i] := 1;
+			peso := peso+w[i]
+		sino
+			x[i] := (W-peso)/w[i];
+			peso := W
+		fin si
+	fin mientras;
+	devolver x
+fin función
+
+ORDENACIÓN TOPOLÓGICA
+función Ordenación topológica 1 (G:grafo): orden[1..n]
+	Grado Entrada [1..n] := Calcular Grado Entrada (G);
+	para i := 1 hasta n hacer Número Topológico [i] := 0;
+	contador := 1;
+	mientras contador <= n hacer
+		v := Buscar nodo de grado 0 sin número topológico asignado; {*}
+		si v no encontrado entonces
+			devolver error "el grafo tiene un ciclo"
+		sino
+			Número Topológico [v] := contador;
+			incrementar contador;
+			para cada w adyacente a v hacer
+				Grado Entrada [w] := Grado Entrada [w] - 1
+		fin si
+	fin mientras;
+	devolver Número Topológico
+fin función
+
+función Ordenación topológica 2 (G:grafo): orden[1..n]
+	Grado Entrada [1..n] := Calcular Grado Entrada (G);
+	{ para i := 1 hasta n hacer Número Topológico [i] := 0; }
+	Crear Cola (C); contador := 1 ;
+	para cada nodo v hacer
+		si Grado Entrada [v] = 0 entonces Insertar Cola (v, C);
+	mientras no Cola Vacı́a (C) hacer
+		v := Eliminar Cola (C);
+		Número Topológico [v] := contador; incrementar contador;
+		para cada w adyacente a v hacer
+			Grado Entrada [w] := Grado Entrada [w] - 1;
+			si Grado Entrada [w] = 0 entonces Insertar Cola (w, C)
+		fin para
+	fin mientras;
+	si contador <= n entonces devolver error "el grafo tiene un ciclo"
+	sino devolver Número Topológico
+fin función
+
+ALGORITMO DE KRUSKAL
+función Kruskal ( G =(N,A) ) : árbol
+	Ordenar A según longitudes crecientes;
+	n := |N|;
+	T := conjunto vacı́o;
+	inicializar n conjuntos, cada uno con un nodo de N;
+	{bucle voraz:}
+	repetir
+		a := (u,v) : arista más corta de A aún sin considerar;
+		Conjunto U := Buscar (u);
+		Conjunto V := Buscar (v);
+		si Conjunto U <> Conjunto V entonces
+			Fusionar (Conjunto U, Conjunto V);
+			T := T U {a}
+		fin si
+	hasta |T| = n-1;
+	devolver T
+fin función
+
+ALGORITMO DE PRIM 
+función Prim 1 ( G =(N,A) ) : árbol
+	T := conjunto vacı́o;
+	B := un nodo de N;
+	mientras B <> N hacer
+		a := (u,v): arista más corta que parte de B
+		(u pertenece a B y v no);
+		T := T U {a};
+		B := B U {v}
+	fin mientras;
+	devolver T
+fin función
+
+función Prim 2 ( L[1..n,1..n] ) : árbol
+	Distancia Mı́nima [1] := -1;
+	T := conjunto vacı́o;
+	para i := 2 hasta n hacer
+		Más Próximo [i] := 1;
+		Distancia Mı́nima [i] := L[i,1]
+	fin para;
+	repetir n-1 veces:	{bucle voraz}
+		min := infinito;
+		para j := 2 hasta n hacer
+			si 0 <= Distancia Mı́nima [j] < min entonces
+				min := Distancia Mı́nima [j];
+				k := j
+			fin si
+		fin para;
+		T := T U { ( Más Próximo [k], k ) };
+		Distancia Mı́nima [k] := -1;	{añadir k a B}
+		para j := 2 hasta n hacer
+			si L[j,k] < Distancia Mı́nima [j] entonces
+				Distancia Mı́nima [j] := L[j,k];
+				Más Próximo [j] := k
+			fin si
+		fin para
+	fin repetir;
+	devolver T
+fin función
+
+ALGORITMO DE DIJKSTRA
+función Dijkstra ( L[1..n,1..n] ) : vector[1..n]
+	C := { 2, 3, ..., n};
+	para i := 2 hasta n hacer
+		D[i] := L[1,i];	
+	{bucle voraz:}
+	repetir n-2 veces:
+		v := nodo de C que minimiza D[v];
+		C := C-{v};
+		para cada w en C hacer
+			D[w] := min ( D[w], D[v]+L[v,w] )
+	fin repetir;
+	devolver D
+fin función
+
+
+
+DISEÑO DE ALGORITMOS POR INDUCCIÓN 
+
+FUNCIÓN DIVIDE Y VENCERÁS
+función Divide y Vencerás (x): solución
+	si x es suficientemente pequeño entonces devolver ad-hoc(x)
+	sino
+		descomponer x en casos más pequeños x1, x2, ..., xa;
+		para i := 1 hasta a hacer
+			yi := Divide y Vencerás (xi)
+		fin para;
+		combinar los yi para obtener una solución y de x;
+		devolver y
+	fin si
+fin función
+
+PROGRAMACIÓN DINÁMICA
+FIBONACCI 
+función fib1(n): valor 				//T(n) = Θ(Φ^n)
+	si n < 2 entonces devolver n
+	sino devolver fib1(n-1) + fib1(n-2)
+	fin si
+fin función
+
+función fib2(n): valor 				//T(n) = Θ(n)
+	i := 1; j := 0;
+	para k := 1 hasta n hacer
+		j := i+j; i := j-i
+	fin para;
+	devolver j
+fin función
+
+función fib3(n): valor 				//T(n) = O(logn)
+	i := 1; j := 0; k := 0; h := 1;
+	mientras n > 0 hacer
+		si n es impar entonces
+			t := j*h;
+			j := i*h + j*k + t;
+			i := i*k + t
+		fin si;
+		t := hˆ2;
+		h := 2*k*h + t;
+		k := kˆ2 + t;
+		n := n div 2
+	fin mientras;
+	devolver j
+fin función
+
+DEVOLVER CAMBIO (MONEDAS)
+función monedas (n): número de monedas
+	const v[1..m]=[1,4,6]	{denominaciones de las monedas}
+	{se construye una tabla c[1..m, 0..n]}
+	para i := 1 hasta m hacer c [i,0] := 0;
+	para i := 1 hasta m hacer
+		para j := 1 hasta n hacer
+			si i = 1 y j < v[i] entonces c[1,j] := infinito
+			sino si i = 1 entonces c[1,j] := 1 + c[1, j-v[1] ]
+			sino si j < v[i] entonces c[i,j] := c[i-1,j]
+			sino c[i,j] := min ( c[i-1, j], 1 + c[i, j-v[i] ] )
+			fin si
+		fin para
+	fin para;
+	devolver c[m,n]
+fin función
+
+EL PROBLEMA DE LA MOCHILA
+función Composición ( M[1..n,0..W], w[1..n] ) : C[1..n]
+	para i:=1 hasta n hacer C[i]:=false;
+	v:=M[n,W];
+	i:=n; j:=W;
+	mientras i>1 y v>0 hacer
+		si M[i,j] <> M[i-1,j] entonces % el objeto i está en la configuración
+			C[i]:=true;
+			j:=j-w[i];
+			v:=M[i-1,j] % leer el valor de la tabla evita calcular v-v[i]
+		fin si;
+		i:=i-1
+	fin mientras;
+	si v>0 entonces C[1]:=true; % caso particular: i=1
+	devolver C
+fin función
+
+
+
+EXPLORACIÓN DE GRAFOS
+
+RECORRIDO EN PROFUNDIDAD	//T(n) = Θ(n + m)
+procedimiento rp (v) {v no ha sido visitado anteriormente}
+	marca[v] := visitado;
+	para cada w adyacente a v hacer
+		si marca[w] != visitado entonces rp(w)
+fin procedimiento
+
+//Para recorrer completamente el grafo (incluso no conexo):
+procedimiento recorridop (G=(N,A))
+	para cada nodo v hacer marca[v] := no visitado;
+	para cada nodo v hacer
+		si marca[v] != visitado entonces rp(v)
+fin procedimiento
+
+//Versión no recursiva: usa una Pila
+procedimiento rp2 (v)
+	Crear Pila (P); marca[v] := visitado; Apilar(v,P);
+	mientras no Pila Vacı́a (P) hacer
+		mientras exista w adyacente a Cima(P): marca[w] != visitado
+		hacer
+			marca[w] := visitado; Apilar (w,P)
+		fin mientras;
+		Desapilar (P)
+	fin mientras
+fin procedimiento
+
+RECORRIDO EN ANCHURA	//T(n) = Θ(n + m)
+procedimiento ra (v)
+	Crear Cola (C); marca[v] := visitado; Insertar Cola (v,C);
+	mientras no Cola Vacı́a (C) hacer
+		u := Eliminar Cola (C);
+		para cada nodo w adyacente a u hacer
+			si marca[w] != visitado entonces
+				marca[w] := visitado; Insertar Cola (w,C)
+			fin si
+		fin para
+	fin mientras
+fin procedimiento
+
+JUEGO DE NIM 
+FUNCIÓN GANADORA
+función Ganadora (i,j){determina si la situación <i,j> es ganadora}
+{hipótesis: 0<=j<=i}
+	para k := 1 hasta j hacer
+		si no Ganadora (i-k,min(2k,i-k)) entonces devolver verdadero;
+	devolver falso
+fin función
+
+PROCEDIMIENTO GANADOR
+procedimiento Ganador (n)
+{1<=j<=i<=n y V[i,j]=verdadero <=> la situación <i,j> es ganadora}
+	V[0,0]:=falso;
+	para i:=1 hasta n hacer
+		para j:=1 hasta i hacer
+		k:=1;
+		mientras k<j y V[i-k,min(2k,i-k)] hacer k:=k+1;
+		V[i,j]:=no V[i-k,min(2k,i-k)]
+fin procedimiento
+
+{inicialización para Nim}
+V[0,0]:=falso; conocido[0,0]:=verdadero;
+para i:=1 hasta n hacer
+	para j:=1 hasta i hacer conocido[i,j]:=falso
+función Nim(i,j)	{determina si la situación <i,j> es ganadora}
+	si conocido[i,j] entonces devolver V[i,j];
+	conocido[i,j]:=verdadero;
+	para k:=1 hasta j hacer
+		si no Nim(i-k,min(2k,i-k)) entonces
+			V[i,j]:=verdadero;
+			devolver verdadero
+		fin si;
+	V[i,j]:=falso;
+	devolver falso
+fin función
+
+PROBLEMA DE LAS 8 REINAS 
+Colocar 8 reinas en un tablero de ajedrez sin que se den jaque
+para i1:=1 hasta 8 hacer
+	para i2:=1 hasta 8 hacer
+		...
+			para i8:=1 hasta 8 hacer
+				ensayo := [i1,i2,...,i8];
+				si solución (ensayo) entonces devolver ensayo
+
+ensayo := permutación inicial;
+mientras no solución (ensayo) y ensayo <> permutación final hacer
+	ensayo := permutación siguiente;
+si solución (ensayo) entonces devolver ensayo
+sino escribir no hay solución
+
+procedimiento test (k,col,diag1,diag2)
+{ensayo[1..k] es k-completable; col = {ensayo[i] : 1 <= i <= k};
+diag1 = {ensayo[i]-i+1 : 1 <= i <= k};
+diag2 = {ensayo[i]+i-1 : 1 <= i <= k}}
+	si k=8 entonces escribir ensayo sino
+		para j:=1 hasta 8 hacer
+			si j no pertenece a col y j-k no pertenece a diag1
+									y j+k no pertenece a diag2 entonces
+				ensayo[k+1] := j ; {es (k+1)-completable}
+				test ( k+1, col U {j}, diag1 U {j-k}, diag2 U {j+k} )
+fin procedimiento
+
+COMPLEJIDAD COMPUTACIONAL
+PROBLEMAS TRATABLES E INTRATABLES
+función Suma Subconjuntos ({i1 , ... , in}) : bool
+	visto := false
+	para cada subconjunto {x1 , ... , xk } ⊆ {i1 , ... ,in }
+		si x1 + x2 + ... + xk = 0 entonces visto := true
+	fin para;
+	devolver visto
+fin función
