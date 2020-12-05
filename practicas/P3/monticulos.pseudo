@@ -1,0 +1,60 @@
+tipo Montículo = registro
+    Tamaño_montículo : 0..Tamaño_máximo
+    Vector_montículo : vector [1..Tamaño_máximo] de Tipo_elemento
+fin registro
+
+procedimiento Inicializar_Montículo (M)
+    M.Tamaño_montículo := 0
+fin procedimiento
+
+función Montículo_Vacío (M) : test
+    return (M:Tamaño_montículo = 0)
+fin función
+
+procedimiento Flotar (M,i) {privado}
+    mientras (i > 1) y (M.Vector_montículo[i div 2] < M.Vector_montículo[i]) hacer
+        intercambiar(M.Vector_montículo[i div 2], M.Vector_montículo[i]);
+        i:= i div 2
+    fin mientras
+fin procedimiento
+
+procedimiento Insertar(M,x)
+    si M.Tamaño_montículo = Tamaño_máximo entonces
+        error Montículo Lleno
+    sino M.Tamaño_montículo := M.Tamaño_montículo +1;
+    M.Vector_montículo[M.Tamaño_montículo]:=x;
+    Flotar(M,M.Tamaño_montículo)
+fin procedimiento
+
+procedimiento Hundir (M,i) {privado}
+    repetir
+        HijoIzq := 2+i;
+        HijoDer := 2*i+1;
+        j := i;
+        si HijoDer <= M.Tamaño_montículo y M.Vector_montículo[HijoDer] > M.Vector_montículo[i] entonces
+            i := HijoDer
+        si HijoIzq <= M.Tamaño_montículo y M.Vector_montículo[HijoIzq] > M.Vector_montículo[i] entonces
+            i := HijoIzq
+        intercambiar (M.Vector_montículo[j],M.Vector_montículo[i])
+    hasta j=i
+fin procedimiento
+
+función EliminarMax (M) : Tipo_elemento
+    si Montículo_Vacío (M) entonces
+        error Montículo Vacío
+    sino
+        x := M.Vector_montículo[1];
+        M.Vector_montículo[1] := M.Vector_montículo[M.Tamaño_montículo];
+        M.Tamaño_montículo := M.Tamaño_montículo -1;
+        si M.Tamaño_montículo > 1 entonces
+            Hundir(M, 1);
+        return x
+fin función
+
+procedimiento Crear_Montículo (V[1..n],M)
+    Copiar V en M.Vector_montículo;
+    M.Tamaño_montículo := m;
+    para i := M.Tamaño_montículo div 2 hasta 1 paso -1
+        Hundir(M,i);
+    fin para
+fin procedimiento
